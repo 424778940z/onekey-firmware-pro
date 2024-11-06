@@ -30,6 +30,7 @@
 #include "hardware_version.h"
 #include "image.h"
 #include "lowlevel.h"
+#include "sdram.h"
 #include "mini_printf.h"
 #include "mipi_lcd.h"
 #include "mpu.h"
@@ -54,7 +55,6 @@
 #include "motor.h"
 #include "spi.h"
 #include "spi_legacy.h"
-#include "systick.h"
 #include "usart.h"
 
 #define MSG_NAME_TO_ID(x) MessageType_MessageType_##x
@@ -326,12 +326,12 @@ static secbool bootloader_usb_loop(const vendor_header* const vhdr,
 
       charge_switch();
 
-      // check usb
+      // check bluetooth
       if (USB_PACKET_SIZE == spi_slave_poll(buf)) {
         host_channel = CHANNEL_SLAVE;
         break;
       }
-      // check bluetooth
+      // check usb
       else if (USB_PACKET_SIZE == usb_webusb_read_blocking(
                                       USB_IFACE_NUM, buf, USB_PACKET_SIZE, 5)) {
         host_channel = CHANNEL_USB;
