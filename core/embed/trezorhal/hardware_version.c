@@ -1,13 +1,42 @@
 #include "hardware_version.h"
 
+#include <string.h>
+
 #include "adc.h"
 #include "util_macros.h"
 
-const char* const HW_VER_str[] = {
-    ENUM_NAME_ARRAY_ITEM(HW_VER_INVALID), ENUM_NAME_ARRAY_ITEM(HW_VER_UNKNOWN),
-    ENUM_NAME_ARRAY_ITEM(HW_VER_LEGACY),  ENUM_NAME_ARRAY_ITEM(HW_VER_1P3A),
-    ENUM_NAME_ARRAY_ITEM(HW_VER_3P0),     ENUM_NAME_ARRAY_ITEM(HW_VER_3P0A),
-};
+// since the HW_VER_t enum was designed to represent ADC values directly for
+// easy usage we cannot use regular "array of strings" method to offer name
+// reflection because the array will have gaps between items, which wasting
+// memory
+
+char* hw_ver_to_str(HW_VER_t hw_ver) {
+  static char hw_ver_str[32];  // self contained static buffer
+
+  switch (hw_ver) {
+    case HW_VER_UNKNOWN:
+      strncpy(hw_ver_str, "HW_VER_UNKNOWN", sizeof(hw_ver_str) - 1);
+      break;
+    case HW_VER_LEGACY:
+      strncpy(hw_ver_str, "HW_VER_LEGACY", sizeof(hw_ver_str) - 1);
+      break;
+    case HW_VER_1P3A:
+      strncpy(hw_ver_str, "HW_VER_1P3A", sizeof(hw_ver_str) - 1);
+      break;
+    case HW_VER_3P0:
+      strncpy(hw_ver_str, "HW_VER_3P0", sizeof(hw_ver_str) - 1);
+      break;
+    case HW_VER_3P0A:
+      strncpy(hw_ver_str, "HW_VER_3P0A", sizeof(hw_ver_str) - 1);
+      break;
+    case HW_VER_INVALID:
+    default:
+      strncpy(hw_ver_str, "HW_VER_INVALID", sizeof(hw_ver_str) - 1);
+      break;
+  }
+
+  return hw_ver_str;
+}
 
 static bool check_mv_in_range(uint16_t value, uint16_t target,
                               uint16_t accuracy_percent) {
